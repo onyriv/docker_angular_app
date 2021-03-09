@@ -1,0 +1,73 @@
+# create a working dir and move into it
+
+#install node.js
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo apt install nodejs
+
+# check nodejs and npm version
+node --version
+npm --version
+
+# install angular/cli
+npm install -g @angular/cli
+
+# check angular installation
+ng --version
+
+# create new angular application
+ng new angular
+
+# cd into angular dir and make below change in package.json file
+vi package.json
+change "start": "ng serve" to "start": "ng serve --host 0.0.0.0"
+
+# create Dockerfile
+#Angular Dockerfile
+
+	FROM node:latest as build-step
+	WORKDIR /app
+	COPY package.json ./
+	RUN npm install
+	COPY . .
+	EXPOSE 4200
+	CMD npm run start
+
+# create docker-compose.yml 
+
+	version: "3.3"
+	services:
+	  devapp:
+		build: .
+		ports:
+		  - "8001:4200"
+		volumes:
+		  - "/app/node_modules"
+		  - ".:/app"
+
+
+# install docker-compose (if not already installed)
+apt install docker-compose
+docker images ls  (# to see docker images)
+
+# Build imgage and run container ( run command inside of Dir with Dockerfile)
+docker-compose up -d
+docker images ls  (# to see docker images)
+docker ps  (# to check container)
+
+# access angular app using browser on port 8001
+localhost:8001
+
+##########################################################
+
+# push image into docker hub
+docker login
+# input username and password
+
+# tag and push image
+
+docker tag <docker image name> <tagname:v1>
+docker push <tagname:v1>
+
+
+
+
